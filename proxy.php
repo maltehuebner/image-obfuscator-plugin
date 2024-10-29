@@ -27,6 +27,8 @@ if (!file_exists($imagePath)) {
 }
 
 $imageInfo = getimagesize($imagePath);
+header('Cache-Control: public, max-age=604800, immutable');
+header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 604800) . ' GMT');
 header('Content-Type: ' . $imageInfo['mime']);
 header('Content-Length: ' . filesize($imagePath));
 
