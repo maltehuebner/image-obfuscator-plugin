@@ -14,13 +14,12 @@
  */
 
 function mask_image_urls($content) {
-    // Basis-URL für das Plugin-Verzeichnis
-    $plugin_url = plugin_dir_url(__FILE__) . 'proxy.php?id=';
+    $pluginUrl = plugin_dir_url(__FILE__) . 'proxy.php?id=';
 
-    return preg_replace_callback('/<img.*?src=["\']([^"\']+)["\'].*?wp-image-([0-9]+).*?>/i', function ($matches) use ($plugin_url) {
-        $image_id = $matches[2]; // Bild-ID extrahieren
-        $masked_url = $plugin_url . $image_id;
-        return str_replace($matches[1], $masked_url, $matches[0]);
+    return preg_replace_callback('/<img.*?src=["\']([^"\']+)["\'].*?wp-image-([0-9]+).*?>/i', function ($matches) use ($pluginUrl) {
+        $imageId = $matches[2];
+        $maskedUrl = $pluginUrl . $imageId;
+        return str_replace($matches[1], $maskedUrl, $matches[0]);
     }, $content);
 }
 
