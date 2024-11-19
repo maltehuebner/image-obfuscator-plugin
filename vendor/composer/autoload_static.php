@@ -22,6 +22,7 @@ class ComposerStaticInit3dd8e7d24b1eed61a7929312fc56158a
         'M' => 
         array (
             'Masterminds\\' => 12,
+            'MalteHuebner\\ImageObfuscator\\' => 29,
         ),
     );
 
@@ -45,6 +46,10 @@ class ComposerStaticInit3dd8e7d24b1eed61a7929312fc56158a
         'Masterminds\\' => 
         array (
             0 => __DIR__ . '/..' . '/masterminds/html5/src',
+        ),
+        'MalteHuebner\\ImageObfuscator\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
         ),
     );
 

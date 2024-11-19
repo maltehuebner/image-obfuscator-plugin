@@ -11,4 +11,5 @@ return array(
     'Symfony\\Component\\DomCrawler\\' => array($vendorDir . '/symfony/dom-crawler'),
     'Symfony\\Component\\CssSelector\\' => array($vendorDir . '/symfony/css-selector'),
     'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
+    'MalteHuebner\\ImageObfuscator\\' => array($baseDir . '/src'),
 );

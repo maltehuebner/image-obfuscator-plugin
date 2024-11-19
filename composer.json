@@ -2,5 +2,10 @@
     "require": {
         "symfony/dom-crawler": "^7.1",
         "symfony/css-selector": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "MalteHuebner\\ImageObfuscator\\": "src/"
+        }
     }
 }
