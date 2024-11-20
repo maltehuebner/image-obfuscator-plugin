@@ -19,33 +19,36 @@ class ImageProxyProcessor {
         $this->editor = new Editor();
     }
 
-    public function processContent($content) {
+    public function processContent(string $content) {
         $crawler = new Crawler($content);
 
         $crawler->filter('img')->each(function (Crawler $node) {
-            $attachmentId = $this->getAttachmentId($node);
-
-            if ($attachmentId) {
-                $src = $node->attr('src');
-                $size = 'full';
-                if (preg_match('/-(\d+x\d+)\.(jpg|jpeg|png|gif)$/', $src, $sizeMatch)) {
-                    $size = $sizeMatch[1];
-                }
-
-                $cacheFilename = $attachmentId . '-' . $size . '.jpg';
-                $cacheFileUrl = $this->cacheUrl . $cacheFilename;
-
-                if (!$this->cache->hasFile($cacheFilename)) {
-                    $this->editor->processAttachment($attachmentId, $size, $cacheFilename);
-                }
-
-                $node->getNode(0)->setAttribute('src', $cacheFileUrl);
-
-                $this->updateSrcset($node, $attachmentId);
-            }
+            $this->processImage($node);
         });
 
         return $crawler->html();
+    }
+
+    private function processImage(Crawler $node): void
+    {
+        $attachmentId = $this->getAttachmentId($node);
+
+        if ($attachmentId) {
+            $src = $node->attr('src');
+
+            $size = $this->detectSize($src);
+
+            $cacheFilename = $this->generateFilename($attachmentId, $size);
+            $cacheFileUrl = $this->cacheUrl . $cacheFilename;
+
+            if (!$this->cache->hasFile($cacheFilename)) {
+                $this->editor->processAttachment($attachmentId, $size, $cacheFilename);
+            }
+
+            $node->getNode(0)->setAttribute('src', $cacheFileUrl);
+
+            $this->updateSrcset($node, $attachmentId);
+        }
     }
 
     private function getAttachmentId(Crawler $node): int
@@ -79,7 +82,7 @@ class ImageProxyProcessor {
                     $entrySize = $entryMatch[2];
                     $entryWidth = $entryMatch[4];
 
-                    $entryCacheFilename = $attachmentId . '-' . $entrySize . '.jpg';
+                    $entryCacheFilename = $this->generateFilename($attachmentId, $entrySize);
                     $entryCachePath = $this->cache->generateFilename($entryCacheFilename);
                     $entryCacheUrl = $this->cacheUrl . $entryCacheFilename;
 
@@ -95,5 +98,21 @@ class ImageProxyProcessor {
 
             $node->getNode(0)->setAttribute('srcset', implode(', ', $updatedSrcset));
         }
+    }
+
+    public function detectSize(string $src): string
+    {
+        $size = 'full';
+
+        if (preg_match('/-(\d+x\d+)\.(jpg|jpeg|png|gif)$/', $src, $sizeMatch)) {
+            $size = $sizeMatch[1];
+        }
+
+        return $size;
+    }
+
+    private function generateFilename(int $attachmentId, string $size): string
+    {
+        return sprintf('%d-%s.jpg', $attachmentId, $size);
     }
 }
